@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sketch Overlay Camera</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+    }
+    #camera, #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+    #overlay {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    #fileInput {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: white;
+      padding: 6px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <input type="file" id="fileInput" accept="image/*">
+  <video id="camera" autoplay playsinline muted></video>
+  <img id="overlay" src="" alt="Overlay">  <script>
+    const video = document.getElementById('camera');
+    const overlay = document.getElementById('overlay');
+    const fileInput = document.getElementById('fileInput');
+
+    // Open camera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => alert('Camera access denied: ' + err));
+
+    // Load uploaded image as overlay
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        overlay.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script></body>
+</html>
